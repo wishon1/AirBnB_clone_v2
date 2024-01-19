@@ -103,49 +103,6 @@ class test_basemodel(unittest.TestCase):
         n = new.to_dict()
         new = BaseModel(**n)
         self.assertFalse(new.created_at == new.updated_at)
-    
-    def captureOutput(self, command)
-        with patch('sys.stdout', new_callable=StringIO) as str_stdout
-            self.console.onecmd(command)
-            return str_stdout.getvalue().strip()
-
-    def capture_output(self, command):
-        """method to capture the cmd passed on issaty"""
-        with patch('sys.stdout', new_callable=StringIO) as expected_std:
-            self.console.onecmd(command)
-            return expected_std.getvalue().strip()
- 
-    def do_create(self):
-        """ test the create methode of console.py """
-        # if a string is passed as command
-        cmd = 'create state name="California"'
-        output = self.capture_output(cmd)
-        self.assertIn('California', output)
-
-        # if the name contaiins special characters
-        cmd = 'create State name="My\Little_\_house"'
-        output = self.capture_output(cmd)
-        self.assertIn('My Little house', output)
-
-        # if an integer is passed as the name
-        cmd = 'create State name=32'
-        output = self.capture_output(cmd)
-        self.assertIn('32', output)
-
-        # if a decimal is given is given
-        cmd = 'create State name=3.147'
-        output = self.capture_output(cmd)
-        self.assertIn('3.147', output)
-
-        # if on create is entered as command
-        cmd = 'create'
-        output = self.capture_output(cmd)
-        self.assertEqual(output, "** class name missing **")
-
-        # if class name does not exist 
-        command = 'create NonExistentClass name="Test"'
-        output = self.capture_output(command)
-        self.assertEqual(output, "** class doesn't exist **")
 
     def delete_obj(self):
         """ test for deletion of object"""

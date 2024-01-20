@@ -1,7 +1,12 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import String, Column, Integer, ForeignKey, Float
+from sqlalchemy import String, Column, Integer, ForeignKey, Float, Table
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from models.review import Review
+import models
+from os import getenv
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -16,4 +21,7 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    # amenity_ids = []
+    amenity_ids = []
+
+    reviews = relationship('Review' cascade='all, delete, delete-orphan', backref='place')
+    

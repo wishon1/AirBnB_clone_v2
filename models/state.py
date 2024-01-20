@@ -24,7 +24,7 @@ class State(BaseModel):
         name = ""
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*arg, **kwargs)
+        super().__init__(*args, **kwargs)
 
     if models.chosen_storage != 'db':
         @property

@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 """ Console Module """
-import cmd
-import sys
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -10,6 +8,9 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import shlex
+import cmd
+import sys
 
 
 class HBNBCommand(cmd.Cmd):
@@ -73,7 +74,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] =='}'\
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -113,45 +114,42 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
+    def _parser(self, args):
+        """ parser method """
+        Ndict = {}
+        for arg in args:
+            if "=" in arg:
+                kvp = arg.split('=', 1)
+                key = kvp[0]
+                value = kvp[1]
+                if value[0] == value[-1] == '"':
+                    value = shlex.split(value)[0].replace('_', ' ')
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        try:
+                            value = float(value)
+                        except ValueError:
+                            continue
+                Ndict[key] = value
+        return Ndict
+
+    def do_create(self, arg):
+        """ Create an object of any class with given parameters """
+        args = arg.split()
+        args_len = len(args)
+        if args_len == 0:
             print("** class name missing **")
-            return
+            return False
+        if args[0] in self.classes:
+            new_dict = self._parser(args[1:])
+            instance = self.classes[args[0]](**new_dict)
         else:
-            instance_arg = args.split(" ")
-
-        if instance_arg[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
-            return
- 
-        new_instance = HBNBCommand.classes[instance_arg[0]]()
-        for param in instance_arg[1:]:
-            param = param.split("=")
-            if len(param) != 2:
-                continue
-            key = param[0]
-            value = param[1]
-
-            # Remove quotes and replace underscore with space for strings
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1].replace('_', ' ')
-
-            # if float decimal is given typecast it to float
-            elif '.' in value:
-                value = float(value)
-
-            # if value is an integer typecast it to  int
-            elif value.isdigit():
-                value = int(value)
-            elif value is None:
-                continue
-            
-            setattr(new_instance, key, value)
-
-        storage.new(new_instance)
-        storage.save()
-        print(new_instance.id)
+            return False
+        print(instance.id)
+        instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -214,7 +212,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -233,11 +231,14 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            # change ._FileStorage__objects to .all() because there no
+            # attribute for the storage
+            # when you wanna get the data from the db system
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -346,6 +347,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

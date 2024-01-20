@@ -5,14 +5,19 @@ from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from model.place import place
+from models.place import Place
+import models
 
 
 class State(BaseModel):
-    """ State class """
-    __tablename__ = states
+    """
+        State class:
+            Args:
+                BaseModel: class which is inherited from bas_model.py
+    """
+    __tablename__ = "states"
 
-    name = Column(string(128), nullable=False)
+    name = Column(String(128), nullable=False)
     cities = relationship("City", backref='state',
                           cascade='all, delete, delete-orphan')
 

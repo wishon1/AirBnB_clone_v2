@@ -7,12 +7,11 @@ from models.user import User
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
-from models.place import place
+from models.place import Place
 from models.review import Review
 from os import getenv
 
-
-chosen_storage = os.getenv('HBNB_TYPE_STORAGE', default='fs')
+chosen_storage = getenv("HBNB_TYPE_STORAGE")
 
 if chosen_storage == 'db':
     storage = DBStorage()
@@ -20,5 +19,3 @@ if chosen_storage == 'db':
 else:
     storage = FileStorage()
     storage.reload()
-storage = FileStorage()
-storage.reload()

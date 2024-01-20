@@ -10,7 +10,13 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        return FileStorage.__objects
+        if cls is not None:
+            new_dictionary = {}
+            for key, value in self.__objects.items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    new_dictionary[key] = value
+            return new_dictionary
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -53,7 +59,16 @@ class FileStorage:
         """ methid to delete obj from __objects if it’s inside -
             if obj is equal to None, the method should not do anything
         """
-        if obj is None:
-            pass
-        else:
-            obj.delete()
+        if obj is not None:
+            key_val = obj.__class__.__name__ + '.' + obj.id
+            if key_val in self.__objects:
+                del self.__objects[key_val]
+
+    def close(self):
+        """
+        Initiates the reloading process by invoking the `reload` method.
+
+        This method is responsible for triggering the deserialization of
+        the JSON file
+        """
+        return self.reload()

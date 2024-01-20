@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
-from models.base_model import BaseModel
-from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from models.place import Place
+from models.city import City
+from os import getenv
 import models
+import sqlalchemy
 
 
 class State(BaseModel):
@@ -15,21 +15,27 @@ class State(BaseModel):
             Args:
                 BaseModel: class which is inherited from bas_model.py
     """
-    __tablename__ = "states"
+    if models.chosen_storage == 'db':
+        __tablename__ = "states"
 
-    name = Column(String(128), nullable=False)
-    cities = relationship("City", backref='state',
-                          cascade='all, delete, delete-orphan')
+        name = Column(String(128), nullable=False)
+        cities = relationship("City", backref="state")
+    else:
+        name = ""
 
-    @property
-    def cities(self):
-        """ Getter attribute that returns the list of City instances
-            with state_id equals to the current State.id
-        """
-        from models import storage
-        list_city = []
-        cities = storage.all()
-        for city in cities.value():
-            if city.state_id == self.id:
-                list_city.append(city)
-        return list_city
+    def __init__(self, *args, **kwargs):
+        super().__init__(*arg, **kwargs)
+
+    if models.chosen_storage != 'db':
+        @property
+        def cities(self):
+            """ Getter attribute that returns the list of City instances
+                with state_id equals to the current State.id
+            """
+            from models import storage
+            list_city = []
+            cities = storage.all()
+            for city in cities.value():
+                if city.state_id == self.id:
+                    list_city.append(city)
+            return list_city

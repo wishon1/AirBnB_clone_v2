@@ -2,7 +2,7 @@
 """ State Module for HBNB project """
 from models.base_model import BaseModel, Base
 from sqlalchemy import Table, Column, String
-from models.place import place_amenity
+from models.place import Place
 from sqlalchemy.orm import relationship
 
 class Amenity(BaseModel, Base):

@@ -2,7 +2,7 @@
 #  script that sets up your web servers for the deployment of web_static
 
 #first update the machine
-echo "\n updating the system..."
+echo "updating the system..."
 sudo apt-get update
 
 if command -v nginx
@@ -13,7 +13,7 @@ else
 fi
 
 # check if the /data/web_static exits else create it
-if [ ! -d "/data/web_static/"]
+if [ ! -d "/data/web_static/" ]
 then
 	echo "creating new directory: /data/web_static.."
 	sudo mkdir -p "/data/web_static"
@@ -22,18 +22,18 @@ else
 fi
 
 # create /data/web_static/releases/ directory if it doesnt exist
-if [ ! -d "/data/web_static/releases/"]
+if [ ! -d "/data/web_static/releases/" ]
 then
 	echo "creating new directory: /data/web_static/releases/.."
 	sudo mkdir -p "/data/web_static/releases/"
 else
-	printf "Directory /data/web_static/releases/ already exists.."
+	echo "Directory /data/web_static/releases/ already exists.."
 fi
 
 # create /data/web_static/shared/ if it doest not exits
 if [ ! -d "/data/web_static/shared/" ]
 then
-	echo "\n Creating new directory: /data/web_static/shared/.."
+	echo "Creating new directory: /data/web_static/shared/.."
 	sudo mkdir -p "/data/web_static/shared/"
 else
 	echo "Directory /data/web_static/shared/\" already exits.."
@@ -53,10 +53,10 @@ fi
 sudo mkdir -p "/data/web_static/releases/test/index.html"
 
 echo "<!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-	<meta charset="UTF-8"\>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"\>
+	<meta charset='UTF-8'\>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'\>
 	<title>Test page</title>
 </head>
 <body>

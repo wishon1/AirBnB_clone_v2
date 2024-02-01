@@ -52,18 +52,12 @@ fi
 # (with simple content, to test your Nginx configuration)
 sudo mkdir -p "/data/web_static/releases/test/index.html"
 
-echo "<!DOCTYPE html>
-<html lang='en'>
-<head>
-	<meta charset='UTF-8'\>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0'\>
-	<title>Test page</title>
-</head>
-<body>
-	<p>
-		Test page to test Nginx configuration
-	</p>
-</body>
+echo "<html>
+  <head>
+  </head>
+  <body>
+    Holberton School
+  </body>
 </html>" >> /data/web_static/releases/test/index.html
 
 # path in which the synbolic link is pointing to:

@@ -5,6 +5,11 @@ from datetime import datetime
 from fabric.api import *
 
 
+# host IP addresses for web-01 && web-02
+env.hosts = ['54.144.139.197', '34.203.29.50']
+env.user = "ubuntu"
+
+
 def do_pack():
     """ create an a .tgz achive"""
     # get the current date and time

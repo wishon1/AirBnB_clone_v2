@@ -50,22 +50,26 @@ def do_deploy(archive_path):
         run("sudo mkdir -p {}".format(newest_version_path))
 
         # Extract the archive into the newest version directory
-        run("sudo tar -xzf {} -C {}/".format(archive_file_path, newest_version_path))
+        run("sudo tar -xzf {} -C {}/"
+            .format(archive_file_path, newest_version_path))
 
         # Remove the archive file from the server
         run("sudo rm {}".format(archive_file_path))
 
         # Move the contents of web_static to the newest version directory
-        run("sudo mv {}/web_static/* {}".format(newest_version_path, newest_version_path))
+        run("sudo mv {}/web_static/* {}"
+            .format(newest_version_path, newest_version_path))
 
         # Remove the web_static directory from the newest version directory
-        run("sudo rm -rf {}/web_static".format(newest_version_path))
+        run("sudo rm -rf {}/web_static"
+            .format(newest_version_path))
 
         # Remove the current symbolic link
         run("sudo rm -rf /data/web_static/current")
 
         # Create a new symbolic link to the newest version
-        run("sudo ln -s {} /data/web_static/current".format(newest_version_path))
+        run("sudo ln -s {} /data/web_static/current"
+            .format(newest_version_path))
 
         print("New version deployed!")
         return True

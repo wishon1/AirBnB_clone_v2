@@ -33,37 +33,41 @@ def do_pack():
 
 def do_deploy(archive_path):
     """Deploy the archive to web servers."""
-    # Check if the archive exists
     if os.path.exists(archive_path):
-        # Extract archive and prepare folder paths
-        archive = archive_path.split('/')[1]
-        tmp_obj = "/tmp/{}".format(archive)
-        folder = archive.split('.')[0]
-        folder_path = "/data/web_static/releases/{}/".format(folder)
+        # Extract the file name from the path
+        file_name = archive_path[9:]
 
-        # Upload the archive to the server
-        put(archive_path, tmp_obj)
+        # Define the path where the newest version will be stored
+        newest_version_path = "/data/web_static/releases/" + file_name[:-4]
 
-        # Create directory to extract archive contents
-        run("mkdir -p {}".format(folder_path))
+        # Update the path of the archive file
+        archive_file_path = "/tmp/" + file_name
 
-        # Extract archive contents to folder path
-        run("tar -xzf {} -C {}".format(tmp_obj, folder_path))
+        # Transfer the archive file to the server's temporary directory
+        put(archive_path, "/tmp/")
 
-        # Remove the archive from tmp directory
-        run("rm {}".format(tmp_obj))
+        # Create the directory for the newest version
+        run("sudo mkdir -p {}".format(newest_version_path))
 
-        # Move contents of extracted folder to folder path
-        run("mv -f {}* {}".format(folder_path, folder_path))
+        # Extract the archive into the newest version directory
+        run("sudo tar -xzf {} -C {}/".format(archive_file_path, newest_version_path))
 
-        # Remove web_static directory from folder path
-        run("rm -rf {}web_static".format(folder_path))
+        # Remove the archive file from the server
+        run("sudo rm {}".format(archive_file_path))
 
-        # Remove current symbolic link
-        run("rm -rf /data/web_static/current")
+        # Move the contents of web_static to the newest version directory
+        run("sudo mv {}/web_static/* {}".format(newest_version_path, newest_version_path))
 
-        # Create new symbolic link to current version
-        run("ln -s {} /data/web_static/current".format(folder_path))
+        # Remove the web_static directory from the newest version directory
+        run("sudo rm -rf {}/web_static".format(newest_version_path))
 
-        return True  # Deployment successful
-    return False  # Archive not found
+        # Remove the current symbolic link
+        run("sudo rm -rf /data/web_static/current")
+
+        # Create a new symbolic link to the newest version
+        run("sudo ln -s {} /data/web_static/current".format(newest_version_path))
+
+        print("New version deployed!")
+        return True
+
+    return False

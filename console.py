@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#/usr/bin/python3
 """ Console Module """
 from models.base_model import BaseModel
 from models.__init__ import storage
